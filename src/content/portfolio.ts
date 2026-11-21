@@ -109,7 +109,7 @@ export const timeline: Milestone[] = [
     id: "meil",
     period: "Jan 2024 — Jun 2026",
     verified: true,
-    title: "SCADA Engineer",
+    title: "Site In-Charge",
     org: "Megha Engineering & Infrastructure Ltd (MEIL)",
     kind: "experience",
     tag: "Industry",
@@ -257,7 +257,7 @@ export const experience = {
   chapterLabel: "04 — Professional Experience",
   title: "Engineering Discipline, Business Ambition",
   org: "Megha Engineering & Infrastructure Limited (MEIL)",
-  role: "SCADA Engineer",
+  role: "Site In-Charge",
   period: "Jan 2024 — Jun 2026",
   context: "Project: BWSSB — Bengaluru",
   summary:

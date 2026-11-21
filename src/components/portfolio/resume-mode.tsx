@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Printer, ExternalLink } from "lucide-react";
 import { useReducedMotion } from "@/hooks/use-media-query";
 import { usePortfolioStore } from "@/lib/store";
-import { site } from "@/content/portfolio";
-import type { Milestone } from "@/content/portfolio";
+import { site, experience } from "@/content/portfolio";
 
 const summary =
   "Business-focused professional with an interdisciplinary academic foundation spanning computer science, business administration and an MBA in Marketing (major) with Operations (minor). Interested in marketing strategy, brand development, market research, operations management and business growth. Value the ability to connect customer insight with business execution.";
@@ -109,25 +107,6 @@ const printCss = `
 export default function ResumeMode() {
   const setMode = usePortfolioStore((s) => s.setMode);
   const reduced = useReducedMotion();
-
-  const milestones = useMemo(
-    () =>
-      ({
-        meil: {
-          id: "meil",
-          period: "Dates to be confirmed",
-          verified: false,
-          title: "SCADA Engineer",
-          org: "Megha Engineering & Infrastructure Ltd (MEIL) — Project: BWSSB, Bengaluru",
-          kind: "experience" as const,
-          description:
-            "Professional engineering role in large-scale public infrastructure delivery. Detailed responsibilities to be confirmed.",
-          learning: [],
-          tag: "Industry",
-        },
-      }) satisfies Record<string, Milestone>,
-    []
-  );
 
   const anim = (i: number) =>
     reduced
@@ -247,16 +226,17 @@ export default function ResumeMode() {
           <div className="flex flex-wrap items-baseline justify-between gap-x-4">
             <div>
               <h3 className="font-[family-name:var(--font-display-cormorant)] text-lg">
-                SCADA Engineer — {milestones.meil.org}
+                {experience.role} — {experience.org}
               </h3>
-              <p className="text-sm text-stone-600">
-                Professional engineering role within large-scale public infrastructure delivery.
-              </p>
+              <p className="text-sm text-stone-600">{experience.context}</p>
             </div>
-            <span className="font-mono text-xs text-stone-500">
-              Employment dates to be confirmed
-            </span>
+            <span className="font-mono text-xs text-stone-500">{experience.period}</span>
           </div>
+          <ul className="mt-3 space-y-2 list-disc list-outside pl-5 text-[15px] leading-relaxed text-stone-700">
+            {experience.responsibilities.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
         </motion.section>
 
         <motion.section {...anim(step())} aria-label="Featured project" className="rkm-entry mt-9">

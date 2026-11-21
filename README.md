@@ -9,7 +9,7 @@ gold accents, and a subtle network animation in the hero.
 
 **Sections:** Hero · About (photo + learning focus) · Journey (education timeline) ·
 Featured Work (case study: *From Unbranded to Brand-Led*) · Experience (MEIL —
-SCADA Engineer, BWSSB project) · Skills (evidence-based competency map) ·
+Site In-Charge, BWSSB project) · Skills (evidence-based competency map) ·
 Credentials (Forage / HackerRank / GUVI certificates) · Resume (embedded Drive
 preview + clean Resume Mode) · Contact (validated form with email notifications)
 
@@ -58,6 +58,24 @@ and Web3Forms' free plan is client-only — both reject server-to-server calls.
 Real visitors' browsers pass both, and the server keeps doing what it is good
 at: spam filtering and persistence. Bots that trip the honeypot/timing checks
 receive a fake success and never trigger an email.
+
+## Publish to GitHub
+
+The repository is already initialised on the `main` branch with a clean
+history — no secrets, no database, no build artifacts (see `.gitignore`).
+To publish it:
+
+1. Create an **empty** repository at [github.com/new](https://github.com/new)
+   (do **not** tick "Add a README" — keep it empty).
+2. Then push from the project root:
+
+   ```bash
+   git remote add origin https://github.com/<your-username>/<repo-name>.git
+   git push -u origin main
+   ```
+
+> Tip: with the GitHub CLI it is a single command —
+> `gh repo create <repo-name> --public --source=. --push`.
 
 ## Deployment (Vercel free tier)
 
