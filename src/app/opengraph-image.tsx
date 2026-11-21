@@ -1,5 +1,8 @@
 import { ImageResponse } from "next/og";
 
+/* Required for static export on GitHub Pages. */
+export const dynamic = "force-static";
+
 export const alt =
   "Raushan Kumar Pathak — MBA Candidate in Marketing and Operations";
 export const size = { width: 1200, height: 630 };

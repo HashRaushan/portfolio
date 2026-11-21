@@ -11,6 +11,12 @@
  * ============================================================
  */
 
+/** Must match `basePath` in next.config.ts. GitHub Pages serves the site
+ *  from https://hashraushan.github.io/portfolio/ so every public asset
+ *  reference built by hand needs this prefix (next/image with
+ *  unoptimized:true does not add it automatically). */
+export const basePath = "/portfolio";
+
 export const site = {
   name: "Raushan Kumar Pathak",
   monogram: "RKP",
@@ -29,10 +35,10 @@ export const site = {
     "https://drive.google.com/file/d/1fGfMUXPXS6bIJej3DHfbBIT3KbD3hDgY/view?usp=sharing",
   resumeEmbedUrl:
     "https://drive.google.com/file/d/1fGfMUXPXS6bIJej3DHfbBIT3KbD3hDgY/preview",
-  /** Free Vercel hosting chosen. After the first deploy, replace this with the
-   *  live URL (e.g. https://your-project.vercel.app) so SEO canonical, sitemap
-   *  and social-share tags point at the real address. */
-  url: "https://www.raushankumarpathak.com",
+  /** Live URL on GitHub Pages. Used for SEO canonical, sitemap and
+   *  social-share tags. If you later attach a custom domain, update it
+   *  here AND in next.config.ts (basePath). */
+  url: "https://hashraushan.github.io/portfolio",
   languages: ["English", "Hindi"],
 };
 
@@ -63,7 +69,7 @@ export const about = {
   ],
   statement: site.positioning,
   photo: {
-    src: "/images/headshot.jpg",
+    src: basePath + "/images/headshot.jpg",
     alt: "Raushan Kumar Pathak standing before snow-capped mountains",
   },
   currentlyLearning: [

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Info, ArrowRight } from "lucide-react";
-import { caseStudy } from "@/content/portfolio";
+import {caseStudy, basePath} from "@/content/portfolio";
 import { Reveal, SectionHeading } from "./ui-bits";
 import { cn } from "@/lib/utils";
 
@@ -468,7 +468,7 @@ export default function CaseStudy() {
                         className="relative aspect-[2/3] rounded-lg border border-gold/20 overflow-hidden bg-card/60"
                       >
                         <Image
-                          src={`/images/project/${g.src}`}
+                          src={`${basePath}/images/project/${g.src}`}
                           alt={g.alt}
                           fill
                           sizes="(max-width: 768px) 50vw, 320px"

@@ -54,90 +54,93 @@ export default function Contact() {
 
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
+
+    /* Static-hosting spam filters (no server available on GitHub Pages).
+       Honeypot: real users never see or fill the hidden field.
+       Timing: reject submissions faster than a human could type. */
+    const honeypotHit = (values.company_website ?? "").length > 0;
+    const tooFast = Date.now() - startedAt < 2500;
+    if (honeypotHit || tooFast) {
+      /* Bots see success, but no email is ever sent. */
+      toast({ title: "Message sent" });
+      setSubmitting(false);
+      return;
+    }
+
+    /* Email delivery chain — fired directly from the visitor's browser.
+       FormSubmit and Web3Forms reject server-side requests on free plans,
+       but accept real browser calls (this also passes FormSubmit's
+       Cloudflare challenge).
+       1) FormSubmit (primary)
+       2) Web3Forms (backup, if FormSubmit fails) */
+    const payload = {
+      _subject: `Portfolio enquiry — ${values.enquiryType} — ${values.name}`,
+      _template: "table",
+      _captcha: "false",
+      name: values.name,
+      email: values.email,
+      organisation: values.organisation || "—",
+      enquiryType: values.enquiryType,
+      message: values.message,
+    };
+
     try {
-      const res = await fetch("/api/contact", {
+      const fsRes = await fetch(`https://formsubmit.co/ajax/${site.email}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, startedAt }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
       });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
+      if (!fsRes.ok) throw new Error("FormSubmit failed");
+
+      toast({
+        title: "Message sent",
+        description:
+          "Thank you for reaching out — I will get back to you soon.",
+      });
+      reset();
+    } catch {
+      try {
+        /* Web3Forms access keys are public by design (client-side use).
+           Env var can override; inline value keeps deploys zero-config. */
+        const web3formsKey =
+          process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ??
+          "595e4d2e-aa7f-4238-864d-627dda72d650";
+        const w3Res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            access_key: web3formsKey,
+            subject: payload._subject,
+            from_name: "Portfolio Contact Form",
+            name: values.name,
+            email: values.email,
+            organisation: values.organisation || "",
+            enquiry_type: values.enquiryType,
+            message: values.message,
+          }),
+        });
+        if (!w3Res.ok) throw new Error("Web3Forms failed");
+
         toast({
           title: "Message sent",
           description:
             "Thank you for reaching out — I will get back to you soon.",
         });
         reset();
-
-        /* Email notification chain — fired from the visitor's browser.
-           FormSubmit and Web3Forms both reject server-side requests on free
-           plans, but accept real browser calls (this also passes FormSubmit's
-           Cloudflare challenge). Server already validated + stored the message.
-           1) FormSubmit (primary)
-           2) Web3Forms (backup, if FormSubmit fails) */
-        if (data.notify === "client") {
-          try {
-            const fsRes = await fetch(
-              `https://formsubmit.co/ajax/${site.email}`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-                body: JSON.stringify({
-                  _subject: `Portfolio enquiry — ${values.enquiryType} — ${values.name}`,
-                  _template: "table",
-                  _captcha: "false",
-                  name: values.name,
-                  email: values.email,
-                  organisation: values.organisation || "—",
-                  enquiryType: values.enquiryType,
-                  message: values.message,
-                }),
-              }
-            );
-            if (!fsRes.ok) throw new Error("FormSubmit browser fallback failed");
-          } catch {
-            /* Web3Forms access keys are public by design (client-side use).
-               Env var can override; inline value keeps deploys zero-config. */
-            const web3formsKey =
-              process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ??
-              "595e4d2e-aa7f-4238-864d-627dda72d650";
-            fetch("https://api.web3forms.com/submit", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify({
-                access_key: web3formsKey,
-                subject: `Portfolio enquiry — ${values.enquiryType} — ${values.name}`,
-                from_name: "Portfolio Contact Form",
-                name: values.name,
-                email: values.email,
-                organisation: values.organisation || "",
-                enquiry_type: values.enquiryType,
-                message: values.message,
-              }),
-            }).catch(() => {});
-          }
-        }
-      } else {
+      } catch {
         toast({
           title: "Could not send",
           description:
-            data.error ??
             "Please try again, or reach me directly by email or phone.",
           variant: "destructive",
         });
       }
-    } catch {
-      toast({
-        title: "Network error",
-        description: "Please check your connection and try again.",
-        variant: "destructive",
-      });
     } finally {
       setSubmitting(false);
     }
